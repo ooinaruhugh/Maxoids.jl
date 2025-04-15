@@ -1,6 +1,12 @@
+module OscarInterop
+
 using LinearAlgebra
+import Graphs as gr
 using Oscar
 using Polymake
+
+import Graphs: SimpleDiGraph
+import Oscar: Graph, Directed
 
 function root_polytope(::Type{Matrix}, G::Graph, R=ZZ)
   n = n_vertices(G)
@@ -19,7 +25,7 @@ function fundamental_polytope(::Type{Matrix}, G::Graph, R=ZZ)
   return A[1:m+1,n+1:end] - A[1:m+1,1:n]
 end
 
-function weight_for_CI(G::Graph{Directed})
+function weights_for_cones(G::Graph{Directed})
   TT = tropical_semiring(max)
   A = [ones(ZZRingElem, n_edges(G)+1) fundamental_polytope(Matrix, G)]
 
@@ -37,4 +43,19 @@ function weight_for_CI(G::Graph{Directed})
 
     W
   end
+end
+
+function weights_for_cones(H::SimpleDiGraph)
+  n = gr.nv(H)
+  G = Graph{Directed}(n)
+
+  for e in gr.edges(H)
+    add_edge!(G, gr.src(e), gr.dst(e))
+  end
+
+  return weights_for_cones(G)
+end
+
+export weights_for_cones
+
 end

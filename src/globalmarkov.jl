@@ -1,8 +1,6 @@
-using Oscar
-import Oscar: Graph, Directed
 
 #function which gathers all C*-separation statements of a weighted DAG
-function csep_markov(G::Graoh{Directed}, C)
+function csep_markov(G::SimpleDiGraph, C)
     L = []
     for i in collect(Graphs.vertices(G)), j in 1:i-1
         for K in collect(powerset(setdiff(Graphs.vertices(G), [i,j])))

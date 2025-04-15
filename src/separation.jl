@@ -1,7 +1,17 @@
-using Oscar
-import Oscar: Graph, Edge, Directed
 
-TaggedEdge = Pair{Edge, Bool}
+#unweighted starseparation, inspired by Kamillo's implementation
+
+# Define the types for edges and tagged edges
+struct Edge
+    from::Int64
+    to::Int64
+end
+
+struct TaggedEdge
+    edge::Edge
+    passed_collider::Bool
+end
+
 
 # Function to perform the star reachability search
 #= INPUT: G, a DAG
@@ -11,16 +21,15 @@ TaggedEdge = Pair{Edge, Bool}
 OUTPUT: 
         R, the set of all nodes reachable from R which pass through at most one pair of illegal edges
  =#
-function star_reachability(
-    D::Graph{Directed},
-    illegal_edges::Vector{Edge},
+ function star_reachability(
+    D::SimpleDiGraph,
+    illegal_edges::Vector{Tuple{Edge, Edge}},
     J::Vector{Int64}
 )
-  R = Set{Int64}()
-  frontier = TaggedEdge[]
-  next_frontier = TaggedEdge[]
-  visited = TaggedEdge[]
-
+    R = Set(Int64[])
+    frontier = TaggedEdge[]
+    next_frontier = TaggedEdge[]
+    visited = TaggedEdge[]
 
     D_prime = copy(D)
     original_nv = nv(D)
@@ -88,8 +97,7 @@ function star_reachability(
     end
 end
 
-
-function outedges(D::Graph{Directed}, t::Int64)
+function outedges(D::SimpleDiGraph, t::Int64)
     L = []
     for edge in edges(D)
         if src(edge) == t
@@ -112,7 +120,7 @@ with a new condition for illegal pairs of edges in step iii of algorithm 2  =#
 
 
 function star_separation(
-    D::Graph{Directed},
+    D::SimpleDiGraph,
     J::Vector{Int64},
     L::Vector{Int64}
 )
@@ -171,7 +179,7 @@ function star_separation(
     return K
 end
 
-function starsep(H::Graph{Directed}, i::Int64, j::Int64, K::Vector{Int64})
+function starsep(H::SimpleDiGraph, i::Int64, j::Int64, K::Vector{Int64})
     return in(j, star_separation(H, [i], K))
 end
 
@@ -180,7 +188,7 @@ end
 ##Function to check for Cstar separation in the sense of Amendola et al (2022)
 
 
-function csep(G::Graph{Directed}, C, K::Vector, i::Int64, j::Int64)
+function csep(G::SimpleDiGraph, C, K::Vector, i::Int64, j::Int64)
     if issubset([i,j], K)
         return false 
     end 
@@ -211,5 +219,5 @@ function csep(G::Graph{Directed}, C, K::Vector, i::Int64, j::Int64)
 end 
 
 #if not specified, C is the constant weight matrix supported on G 
-csep(G::Graph{Directed}, K, i, j) = csep(G, constant_weights(G), K, i, j )
+csep(G::SimpleDiGraph, K, i, j) = csep(G, constant_weights(G), K, i, j )
 
