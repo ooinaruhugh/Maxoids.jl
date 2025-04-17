@@ -6,7 +6,7 @@ include("examplegraphs.jl")
 include("globalmarkov.jl")
 
 include("secondary_fan.jl")
-import .OscarInterop: weights_for_cones
+import .OscarInterop: weights_for_cones, secondary_fan
 
 export weights_for_cones
 
