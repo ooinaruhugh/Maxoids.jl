@@ -78,7 +78,8 @@ function all_DAGs(n::Int64)
         end 
 
     end     
-    return DAG_from_edges.(collect(Set(D)))
+    push!(D, [])
+    return [DAG_from_edges(n, E) for E in collect(Set(D))]
 
 end
 
