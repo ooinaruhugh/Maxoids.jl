@@ -50,26 +50,28 @@ function weights_for_cones(G::Graph{Directed}; with_lower_dimensional=false)
 
   sfan = secondary_fan(A)
 
-  maximal_cones(sfan)
-
   O = identity_matrix(TT, n)
   for e in edges(G)
     O[src(e), dst(e)] = 0
   end
 
   if with_lower_dimensional
-    return [map(eachrow(cones(sfan))) do i
-      v = (rays_modulo_lineality(sfan) |> first)[i] |> sum
-      W = identity_matrix(TT, n)
+    if rays_modulo_lineality(sfan) |> first |> isempty
+      return [O]
+    else 
+      return [map(eachrow(cones(sfan))) do i
+        v = (rays_modulo_lineality(sfan) |> first)[i] |> sum
+        W = identity_matrix(TT, n)
 
-      for (e,w) in zip(edges(G), v[1:end-1])
-        W[src(e), dst(e)] = w
-      end
+        for (e,w) in zip(edges(G), v[1:end-1])
+          W[src(e), dst(e)] = w
+        end
 
-      W
-    end...,O]
+        W
+      end...,O]
+    end
   else
-    return [O, map(maximal_cones(sfan)) do C
+    return map(maximal_cones(sfan)) do C
       v = rays_modulo_lineality(C) |> first |> sum
       W = identity_matrix(TT, n_vertices(G))
       for (e,w) in zip(edges(G), v[1:end-1])
@@ -77,7 +79,7 @@ function weights_for_cones(G::Graph{Directed}; with_lower_dimensional=false)
       end
 
       W
-    end...,O]
+    end
   end
 end
 
