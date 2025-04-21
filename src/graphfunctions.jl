@@ -87,10 +87,8 @@ function all_top_ordered_DAGs(n::Int64)
     D = []
     L = [(i,j) for i in 1:n, j in 1:n if i<j]
     for E in collect(powerset(L))
-        if !isempty(E) 
-            G = DAG_from_edges(E)
-            push!(D, G)
-        end 
+        G = DAG_from_edges(n, E)
+        push!(D, G)
     end 
     return D 
 end 

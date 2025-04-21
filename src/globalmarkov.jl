@@ -12,6 +12,25 @@ function csep_markov(G::SimpleDiGraph, C)
     return L 
 end 
 
+# Write the gaussoids.de-compatible binary string representing the CI
+# structure of C^*-separation for (G, C).
+function ci_string(G::SimpleDiGraph, C)
+    s = ""
+    V = sort(collect(Graphs.vertices(G)))
+    for ij in sort(collect(powerset(V, 2, 2)))
+        Vij = setdiff(V, ij)
+        for k in 0:length(V)-2
+            for K in collect(powerset(Vij, k, k))
+                if csep(G,C,K,ij[1],ij[2])
+                    s *= "0"
+                else
+                    s *= "1"
+                end
+            end 
+        end 
+    end 
+    return s
+end
 
 # randomly samples coefficient matrices C supported on G `trials` many times
 # outputs the list of unique C* Markov properties obtained over all samples
