@@ -13,17 +13,16 @@ for (<<>>) {
     push @all, $A;
     $seen{"$A"}++;
 }
-say 0+ keys %seen;
 
 # First make sure that the input file was closed under permutations.
 for my $A (@all) {
-    for my $Ag ($A->orbit(SymmetricGroup)) {
+    for my $Ag ($A->orbit(SymmetricGroup)->list) {
         #die "not closed under permutations for $A"
         #    unless $seen{"$Ag"};
-        $seen{"$Ag"}++;
+        say "Have to add $A -> $Ag" unless
+            $seen{"$Ag"}++;
     }
 }
-say 0+ keys %seen;
 
 # Now check for duals.
 for my $A (@all) {
