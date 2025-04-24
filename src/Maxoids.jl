@@ -9,6 +9,7 @@ include("secondary_fan.jl")
 import .OscarInterop: weights_for_cones, secondary_fan
 
 export weights_for_cones
+export secondary_fan
 
 export star_reachability
 export star_separation

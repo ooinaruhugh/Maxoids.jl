@@ -43,6 +43,13 @@ function secondary_fan(A::Matrix)
   return sfan
 end
 
+function secondary_fan(G::Graph{Directed})
+  TT = tropical_semiring(max)
+  n = n_vertices(G)
+  A = [ones(ZZRingElem, n_edges(G)+1) fundamental_polytope(Matrix, G)]
+  secondary_fan(A)
+end
+
 function weights_for_cones(G::Graph{Directed}; with_lower_dimensional=false)
   TT = tropical_semiring(max)
   n = n_vertices(G)
