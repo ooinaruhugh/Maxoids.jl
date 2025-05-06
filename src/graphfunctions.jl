@@ -44,12 +44,12 @@ end
 
 function get_edges(G::SimpleDiGraph{Int64})
     n = nv(G)
-    return [(i,j) for i in 1:n ,j in 1:n if has_edge(G,i,j)]
+    return [[i,j] for i in 1:n ,j in 1:n if has_edge(G,i,j)]
 end 
 
 function get_edges(G::SimpleGraph{Int64})
     n = nv(G)
-    return [(i,j) for i in 1:n, j in 1:n if (has_edge(G,i,j) && i < j)]
+    return [[i,j] for i in 1:n, j in 1:n if (has_edge(G,i,j) && i < j)]
 end 
 
 function get_skeleton(H::SimpleDiGraph)
