@@ -4,27 +4,22 @@ using Maxoids, Oscar, Graphs
 
 #recovers the ideal from rmk 2.14 from the edges of a DAG 
 
+#TODO: handle case where edge set is empty 
 function ideal_from_DAG_edges(L)
-
     G = Maxoids.DAG_from_edges(L)
-    G_o = Oscar.graph_from_edges(Directed, L)
     n = Graphs.nv(G)
-    S = gaussian_ring(n)
-    M = graphical_model(G_o, S, cached = true )
-    W, K = M.param_gens 
-
-    R = M.param_ring 
-
+    G_o = Oscar.graph_from_edges(Directed, L)
+    l_indices = [Tuple([e[1],e[2]]) for e in L]
+    R, c = polynomial_ring(QQ, ["c[$(i), $(j)]" for (i,j) in l_indices])
+    c_dict = Dict([l_indices[i] => c[i] for i in 1:length(l_indices)])
     I_gens = []
-
-
     for i in 1:n
         for j in i:n
             if length(collect(all_simple_paths(G,i,j))) > 1 
                 paths = all_simple_paths(G,i,j)
                 poly = 0 
                 for path in paths
-                    term = prod([W[path[k],path[k+1]] for k in 1:length(path)-1])
+                    term = prod([c_dict[path[k],path[k+1]] for k in 1:length(path)-1])
                     poly += term
                 end 
                 push!(I_gens, poly)
@@ -32,11 +27,9 @@ function ideal_from_DAG_edges(L)
             end 
 
         end 
-    end 
-
-    I = ideal(I_gens)
+    end     
+    I = isempty(I_gens) ? ideal(zero(R)) : ideal(I_gens)
     return I 
-
 end 
 
 function ideal_from_DAG(G::SimpleDiGraph)
@@ -55,8 +48,7 @@ function fan_from_DAG(G::SimpleDiGraph)
     return fan_from_DAG_edges(Maxoids.get_edges(G))
 end 
 
-#recovers a  matrix for each cone in the fan F of the DAG G with edge set L
-#TODO: add some kind of "with_lower_dimensional" optional argument 
+
 function matrices_from_fan(F,L)
     points = [] 
 
@@ -84,8 +76,15 @@ function matrices_from_DAG(G::SimpleDiGraph)
     L = Maxoids.get_edges(G)
     return matrices_from_fan(F,L)
 end 
+
 ##Diamond example (2.15)
 
-G = Maxoids.complete_DAG(3)
+G = Maxoids.DAG_from_edges([[1,2],[1,3],[3,4],[2,4]])
 C = matrices_from_DAG(G)
 maxoid = unique([Maxoids.csep_markov(G,c) for c in C ])
+
+#check TDAGs for primality
+
+P = Maxoids.all_top_ordered_TDAGs(5)
+ideals = [ideal_from_DAG(G) for G in P ]
+all(is_prime.(ideals))
