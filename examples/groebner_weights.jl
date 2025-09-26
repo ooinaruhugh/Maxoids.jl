@@ -72,7 +72,7 @@ end
 #constructs the Gröbner fan from Rmk 2.14, given the edge set L of a DAG
 function fan_from_DAG_edges(L)
 
-    return(groebner_fan(ideal_from_DAG_edges(L)))
+    return(groebner_fan(binomial_ideal_from_DAG_edges(L)))
 
 end
 
@@ -81,6 +81,9 @@ function fan_from_DAG(G::SimpleDiGraph)
     return fan_from_DAG_edges(Maxoids.get_edges(G))
 end 
 
+
+
+###Functions for generating fans matrices from fans 
 
 function matrices_from_fan(F,L;maximal_only = false)
     points = [] 
@@ -115,9 +118,8 @@ function matrices_from_DAG(G::SimpleDiGraph)
     return matrices_from_fan(F,L)
 end 
 
-
+##get Gröbner cone
 function bounding_vectors(I)
-  # TODO: Marked Gröbner basis
   gens_by_terms = terms.(I; ordering=ordering(I))
   
   v = map(Iterators.peel.(gens_by_terms)) do (lead,tail)
@@ -127,14 +129,51 @@ function bounding_vectors(I)
   return unique!(reduce(vcat, v))
 end
 
-##Diamond example (2.15)
 
-G = Maxoids.DAG_from_edges([[1,2],[1,3],[3,4],[2,4]])
-C = matrices_from_DAG(G)
-maxoid = unique([Maxoids.csep_markov(G,c) for c in C ])
 
-#check TDAGs for primality
 
-P = Maxoids.all_top_ordered_TDAGs(5)
-ideals = [ideal_from_DAG(G) for G in P ]
-all(is_prime.(ideals))
+function symbolic_adjacency_matrix(G)
+  d = Graphs.nv(G)
+  n = Graphs.ne(G)
+
+  R,X = polynomial_ring(QQ, ["e$(Graphs.src(e))$(Graphs.dst(e))" for e in Graphs.edges(G)])
+  C = identity_matrix(R,d)
+
+  for (x,e) in zip(X,Graphs.edges(G))
+    C[Graphs.src(e),Graphs.dst(e)] = x
+  end
+
+  return C
+end
+
+function trop_hyperplanes_of_kleene_star(G)
+  d = Graphs.nv(G)
+  C = symbolic_adjacency_matrix(G)
+  F = filter(C^d|>Matrix) do f
+    length(f)>1
+  end
+
+  N = newton_polytope.(F)
+  NF = normal_fan.(N) .|> Oscar.pm_object
+  
+  return polyhedral_fan(reduce(Polymake.fan.common_refinement, NF[2:end]; init=first(NF)))
+end
+
+#sample the fan randomly 
+function get_cone_reps(G::SimpleDiGraph, trials::Int64)
+
+    cones = []
+
+    for i in 1:trials
+        
+        C = Maxoids.randomly_sampled_matrix(G)
+        ci_stmts = Maxoids.csep_markov(G, C)
+
+        if ! (ci_stmts in cones)
+            push!(cones, ci_stmts)
+
+        end
+    end
+
+    return cones
+end
