@@ -1,4 +1,5 @@
 include("groebner_weights.jl")
+#=
 L = [[1,2],[1,3],[2,3],[2,4],[3,4]]
 I = ideal_from_DAG_edges(L)
 gens(I)
@@ -12,6 +13,8 @@ Psum = P1 + P2 + P3
 F1 = normal_fan(P1)
 F2 = normal_fan(P2)
 collect(Oscar.vertices(Psum))
+
+=# 
 
 function maxoid_polytope(G)
     I = ideal_from_DAG(G)
@@ -27,24 +30,65 @@ function maxoid_polytope(G)
 
 
 end 
-fivenodeDAGs = Maxoids.all_top_ordered_TDAGs(5)
-polytopes = maxoid_polytope.(fivenodeDAGs) 
-i = findfirst(x -> dim(x) == 3, polytopes) 
-
-[length(gens(binomial_ideal_from_DAG_edges(Maxoids.get_edges(G)))) for G in fournodeDAGs]
-l1 = [length(Oscar.vertices(P)) for P in polytopes]
-
-[length(maximal_cones(trop_hyperplanes_of_kleene_star(G))) for G in fournodeDAGs]
-l2 = [length(all_markov_properties(G)) for G in fivenodeDAGs] 
-
-G = fournodeDAGs[18]
+G = Maxoids.complete_DAG(4)
 P = maxoid_polytope(G)
+F = trop_hyperplanes_of_kleene_star(G) 
 L = Maxoids.get_edges(G)
-list = gens(ideal_from_DAG_edges(L))
 facets(P)
-F = normal_fan(P)
 V = Oscar.vertices(P)
 maximal_cones(F) .|> facets
+
+Q = faces(P,2)[4]
+ 
+issubset(Oscar.vertices(Q), Oscar.vertices(P))
+#INPUT: A polytope P, a face Q of P 
+#OUTPUT: A vector in the interior of the cone of the normal fan corresponding to F 
+function interior_point_of_normal_cone(P,Q)
+    QV = Oscar.vertices(Q)
+    PV = Oscar.vertices(P)
+    Q_vertex_indices = [findfirst(x -> x ==v, PV) for v in QV ]
+    full_dim_cones = [normal_cone(P, i) for i in Q_vertex_indices]
+    return -relative_interior_point(intersect(full_dim_cones)) 
+end 
+
+#verify that the vector is a normal vector to Q 
+
+[dot(interior_point_of_normal_cone(P,Q), v) for v in Oscar.vertices(Q)]
+
+dot(interior_point_of_normal_cone(P,Q), relative_interior_point(Q)) #looks good! 
+
+v = interior_point_of_normal_cone(P,Q)
+function matrix_from_vector(G,v)
+    C = Maxoids.constant_weights(G)
+    L = Maxoids.get_edges(G)
+    for k in 1:length(L)
+        i,j = L[k]
+        C[i,j] = v[k]
+    end 
+    return C 
+end 
+
+C = matrix_from_vector(G,v) 
+Q_maxoid = Maxoids.csep_markov(G,C)
+
+Q_maxoid in all_markov_properties(G;generic_only = true)
+
+# INPUT: A graph G 
+# OUTPUT: a dictionary indexed by the maxoids of G 
+# The values of the dict are the faces of P_G which realize the maxoid 
+function face_ci_dict(G)
+    P = maxoid_polytope(G)
+    face_dict = Dict()
+    for i in 0:dim(P)
+        for face in faces(P,i)
+            v = interior_point_of_normal_cone(P,face)
+            maxoid = Maxoids.csep_markov(G, matrix_from_vector(G,v))
+            push!(get!(face_dict, maxoid , []), face)
+        end 
+    end
+    return face_dict  
+end 
+#now write a function 
 
 #look at maxoids corresponding to EDGES: how many of them are properly non-generic? 
 matrices1 = matrices_from_fan(F,L;maximal_only = true)
@@ -66,6 +110,9 @@ matr = matrices_from_fan(F2,sort(Maxoids.get_edges(G)))
 maxoids = unique([Maxoids.csep_markov(G,c) for c in matr])
 
 
+
+
+#= 
 L = [[1,2],[1,3],[1,4],[2,5],[3,5],[4,5]]
 G = Maxoids.DAG_from_edges(L)
 P = maxoid_polytope(G) 
@@ -94,6 +141,9 @@ end
 unique([Maxoids.get_edges(skel_from_statements(G, S)) for S in maxoids])
 
 L = sort(filter(x -> x[1] < x[2], collect(Iterators.product(1:6, 1:6))))
+G = Maxoids.DAG_from_edges(L)
+P = maxoid_polytope(G)
+
 
 G = Maxoids.complete_digraph(6)
 I = ideal_from_DAG(G)
@@ -107,3 +157,5 @@ phi = hom(base_ring(I),R2[1], ["x$i" for i in 1:15])
 
 #groebner_basis(I)
 P = maxoid_polytope(G)
+
+=# 
