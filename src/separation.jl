@@ -1,9 +1,3 @@
-using Oscar: Edge, Graph, Directed
-
-const Vertex = Int64
-const TaggedEdge = Pair{Edge,Bool}
-
-TaggedEdge(i::Vertex,j::Vertex,tag::Bool) = TaggedEdge(Edge(i,j),tag)
 
 function star_reachability(
   D::Graph{Directed},

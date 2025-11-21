@@ -1,6 +1,12 @@
 module Maxoids
 
 using Oscar
+import Oscar: Edge, Graph, Directed
+
+const Vertex = Int64
+const TaggedEdge = Pair{Edge,Bool}
+
+TaggedEdge(i::Vertex,j::Vertex,tag::Bool) = TaggedEdge(Edge(i,j),tag)
 
 import Graphs as gr
 import Graphs: all_simple_paths
