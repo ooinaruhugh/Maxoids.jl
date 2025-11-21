@@ -21,7 +21,18 @@ function maxoid_polytope(G::Graph{Directed})
   return sum(newton_polytope(f) for f in F)
 end
 
-maxoid_fan(G::Graph{Directed}) = maxoid_polytope(G) |> normal_fan
+@doc raw"""
+    maxoid_fan(G::Graph{Directed})
 
+Computes the maxoid fan for `G` as the outer normal fan of the maxoid polytope.
 
+"""
+function maxoid_fan(G::Graph{Directed})
+  inner_nf = maxoid_polytope(G) |> normal_fan
+
+  r, l = rays_modulo_lineality(inner_nf)
+  c    = cones(inner_nf)
+
+  return polyhedral_fan(c, -r, l; non_redundant=true)
+end
 
