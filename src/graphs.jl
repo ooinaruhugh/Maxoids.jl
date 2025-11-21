@@ -1,10 +1,9 @@
-using Oscar
 
 function critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C)
     V = vertices(G)
 
     # make the kleene star to test for max weighted paths
-    Cstar = kleene_star(C);
+    Cstar = kleene_star(C)
 
     # make an empty graph which will be our critical graph that we add edges to
     Gstar = Graph{Directed}(nv(V))
@@ -66,6 +65,7 @@ function reachability_graph(G::Graph{Directed}, K::Vector{Vertex})
     else
       add_edge!(Gstar, i, j)
     end
+  end
   return Gstar
 end
 

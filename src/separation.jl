@@ -161,10 +161,7 @@ function cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j
   paths = all_simple_paths(undirected_G_star, i, j;cutoff = 4)
 
   return all(paths) do p
-    !(length(p) == 2 && (has_edge(G_star, i,j) || has_edge(G_star, j, i))) \
-    && !(length(p) == 3 && (is_type_b(G_star, p, K) || is_type_c(G_star, p, K))) \
-    && !(length(p) == 4 && is_type_d(G_star, p, K)) \
-    && !(length(p) == 5 && is_type_e(G_star, p,K)) && true
+    !(length(p) == 2 && (has_edge(G_star, i,j) || has_edge(G_star, j, i))) && !(length(p) == 3 && (is_type_b(G_star, p, K) || is_type_c(G_star, p, K))) && !(length(p) == 4 && is_type_d(G_star, p, K)) && !(length(p) == 5 && is_type_e(G_star, p,K)) && true
   end
 end
 

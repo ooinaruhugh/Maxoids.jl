@@ -1,9 +1,9 @@
 
 function complete_DAG(d)
   v = Iterators.repeated(1)
-  E = strictly_upper_triangular_matrix(Iterators.take(v, d*(d-1)/2))
+  E = strictly_upper_triangular_matrix(Iterators.take(v, Int(d*(d-1)/2))|>collect)
 
-  return graph_from_adjacency_matrix(E)
+  return graph_from_adjacency_matrix(Directed,E)
 end
 
 const complete_3DAG = complete_DAG(3)

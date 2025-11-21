@@ -19,7 +19,7 @@ end
 function weights_to_matrix(G::Graph{Directed}, W::Vector{<:TropicalSemiringElem})
   C = zeros(tropical_semiring(max), nv(G), nv(G))
 
-  for e,w in zip(edges(G),W)
+  for (e,w) in zip(edges(G),W)
     s,t = src(e),dst(e)
     C[s,t] = w
   end
