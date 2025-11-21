@@ -2,7 +2,7 @@ function constant_weight_matrix(G::Graph{Directed})
     n = nv(G)
     C = zeros(tropical_semiring(max), n, n)
     for e in edges(G)
-      C[src(e),dst(e)] = zero(tropical_semiring(max))
+      C[src(e),dst(e)] = one(tropical_semiring(max))
     end
     return C
 end 

@@ -31,7 +31,7 @@ function critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C)
     return Gstar
 end
 
-kleene_star(C) = sum(map(d -> C^d, 0:ncols(C)-1))
+kleene_star(C) = (identity_matrix(C|>matrix)+C)^ncols(C)
 path_weight(C,p) = prod(map(i -> C[p[i], p[i+1]] , 1:length(p)-1))
 
 function weighted_transitive_reduction(G::Graph{Directed}, C)

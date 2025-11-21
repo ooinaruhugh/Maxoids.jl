@@ -50,6 +50,7 @@ function star_reachability(
         (e, Edge(t,u)) in illegal_edges && continue
 
         push!(next_frontier, new_tagged_edge)
+      end
     end
 
     union!(visited, frontier)
@@ -160,8 +161,12 @@ function cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j
   undirected_G_star = get_skeleton(G_star) # This better be a Graphs.Graph
   paths = all_simple_paths(undirected_G_star, i, j;cutoff = 4)
 
-  return all(paths) do p
-    !(length(p) == 2 && (has_edge(G_star, i,j) || has_edge(G_star, j, i))) && !(length(p) == 3 && (is_type_b(G_star, p, K) || is_type_c(G_star, p, K))) && !(length(p) == 4 && is_type_d(G_star, p, K)) && !(length(p) == 5 && is_type_e(G_star, p,K)) && true
+  return !any(paths) do p
+    length(p) == 2 && (has_edge(G_star, i,j) || has_edge(G_star, j, i)) || 
+    length(p) == 3 && (is_type_b(G_star, p, K) || is_type_c(G_star, p, K)) ||
+    length(p) == 4 && is_type_d(G_star, p, K) ||
+    length(p) == 5 && is_type_e(G_star, p,K) ||
+    false
   end
 end
 
@@ -171,7 +176,7 @@ end
 Tests whether `i` is $C^\star$-separated from `j` in `G` given the nodes in `K`
 and constant weights on `G`.
 """
-cstar_separation(G::Graph{Directed}, K, i, j) = csep(G, constant_weights(G), K, i, j )
+cstar_separation(G::Graph{Directed}, K, i, j) = cstar_separation(G, constant_weight_matrix(G), K, i, j )
 
 ## Checks if paths are one of the types (b) - (e) 
 function is_type_b(G::Graph{Directed}, P::Vector, K::Vector)
