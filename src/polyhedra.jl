@@ -1,7 +1,7 @@
 function symbolic_adjacency_matrix(G::Graph{Directed})
   d = nv(G)
 
-  R,X = polynomial_ring(QQ, "e$(src(e))$(dst(e))" for e in edges(G))
+  R,X = polynomial_ring(QQ, ["e$(src(e))$(dst(e))" for e in edges(G)])
   C = identity_matrix(R,d)
 
   for (x,e) in zip(X,edges(G))
@@ -11,6 +11,11 @@ function symbolic_adjacency_matrix(G::Graph{Directed})
   return C
 end
 
+@doc raw"""
+    maxoid_polytope(G::Graph{Directed})
+
+Computes the maxoid polytope for `G`.
+"""
 function maxoid_polytope(G::Graph{Directed})
   d = nv(G)
   C = symbolic_adjacency_matrix(G)

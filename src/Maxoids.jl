@@ -22,11 +22,15 @@ function to_graphs_graph(G::Graph{Directed})
 end
 
 include("graphs.jl")
+export critical_graph
+export all_DAGs
+export all_top_ordered_DAGs
+export all_top_ordered_TDAGs
 
 include("weights.jl")
 export constant_weight_matrix
 export random_weight_matrix
-export weights_to_matrix
+export weights_to_tropical_matrix
 export matrix_to_weights
 
 include("common-graphs.jl")

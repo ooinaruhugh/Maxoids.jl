@@ -1,5 +1,16 @@
 
-function critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C)
+@doc raw"""
+    critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C::Union{MatElem{<:TropicalSemiringElem},Matrix{<:TropicalSemiringElem}})
+
+Computes the critical DAG $\mathcal{G}^*_{C,K}$ which contains an edge $i\to j$
+whenever $i$ and $j$ are connected by a directed path, and no critical path 
+from $i$ to $j$ in `G` intersects `K`.
+"""
+function critical_graph(
+  G::Graph{Directed}, 
+  K::Vector{Vertex}, 
+  C::Union{MatElem{<:TropicalSemiringElem},Matrix{<:TropicalSemiringElem}}
+)
     V = vertices(G)
     _G = to_graphs_graph(G)
 
@@ -32,8 +43,18 @@ function critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C)
     return Gstar
 end
 
+@doc raw"""
+    critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::Vector{<:RingElement}
+
+Computes the critical DAG $\mathcal{G}^*_{C,K}$ which contains an edge $i\to j$
+whenever $i$ and $j$ are connected by a directed path, and no critical path 
+from $i$ to $j$ in `G` intersects `K`. $C$ denotes the weight matrix on `G` given by the weight
+vector `W`.
+"""
+critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::Vector{<:RingElement}) = critical_graph(G,K,weights_to_tropical_matrix(G,W))
+
 kleene_star(C) = (identity_matrix(C|>matrix)+C)^ncols(C)
-path_weight(C,p) = prod(map(i -> C[p[i], p[i+1]] , 1:length(p)-1))
+path_weight(C,p) = prod(i -> C[p[i], p[i+1]] , 1:length(p)-1)
 
 function weighted_transitive_reduction(G::Graph{Directed}, C)
   #iterate through edges of G and check whether the edge is the critical path
@@ -73,9 +94,49 @@ end
 function get_skeleton(H::Graph{Directed})
     n = nv(H)
     G = gr.SimpleGraph(n,0)
-    for edge in gr.edges(G)
-        gr.add_edge!(G, edge)
+    for e in edges(H)
+      gr.add_edge!(G, src(e), dst(e))
     end
     return G 
 end 
 
+function all_DAGs(n::Int)
+  D = Set{Vector{Tuple{Int,Int}}}()
+  all_edges = [(i,j) for i in 1:n, j in 1:n if i<j]
+  perms = permutations(1:n)
+
+  for E in collect(powerset(all_edges))
+    if !isempty(E) 
+      for perm in perms 
+        F = [(perm[i],perm[j]) for (i,j) in E] 
+
+        push!(D, sort(F))
+      end 
+
+    end 
+
+  end     
+  push!(D, Tuple{Int,Int}[])
+  return [graph_from_edges(Directed, E, n) for E in collect(D)]
+end
+
+function all_top_ordered_DAGs(n::Int)
+  D = []
+  all_edges = [(i,j) for i in 1:n, j in 1:n if i<j]
+  for E in collect(powerset(all_edges))
+    G = graph_from_edges(Directed, E, n)
+    push!(D, G)
+  end 
+  return D 
+end 
+
+function all_top_ordered_TDAGs(n::Int)
+  D = all_top_ordered_DAGs(n)
+  T = []
+  for G in D
+    if G == transitiveclosure(G) && is_connected(get_skeleton(G)) && nv(G) == n 
+      push!(T, G)
+    end 
+  end 
+  return T
+end 

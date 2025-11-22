@@ -9,7 +9,7 @@ function star_reachability(
   next_frontier = TaggedEdge[]
   visited = TaggedEdge[]
 
-  D_prime = copy(D)
+  D_prime = graph_from_edges(Directed, edges(D))
   # 1. Add a dummy vertex for each node j in J
   for i in 1:length(J)
     add_vertex!(D_prime)
@@ -29,7 +29,8 @@ function star_reachability(
 
   while true
     # 3. Expand the reachability set
-    for ((s,t),passed_collider) in frontier
+    for (e,passed_collider) in frontier
+      s,t = src(e),dst(e)
       push!(R,t)
 
       # Check if it's a "s -> t" edge or "s <- t" in the original graph 
@@ -37,7 +38,7 @@ function star_reachability(
 
       # Find all out-edges from t in D_prime (these are the neighbors of t in D)
       for f in outedges(D_prime, t)
-        _, u = f
+        u = dst(f)
 
         u_to_t = has_edge(D,u,t)
         t_is_collider = s < nv(D)+1 ? (s_to_t && u_to_t) : false
@@ -63,14 +64,18 @@ function star_reachability(
 end
 
 function outedges(D::Graph{Directed}, t::Vertex)
-  L = Pair{Vertex,Vertex}[]
-  for edge in edges(D)
-    if src(edge) == t
-      push!(L, (t, dst(edge)))
+  L = Edge[]
+  for e in edges(D)
+    if src(e) == t
+      push!(L, e)
     end
   end
   return L 
 end 
+
+function ancestors(G::Graph{Directed}, i::Vertex)
+  return filter(==(i)∘src, edges(G)|>collect) .|> dst
+end
 
 @doc raw"""
     star_separation(D::Graph{Directed}, J::Vector{Vertex}, L::Vector{Vertex})
@@ -159,15 +164,18 @@ function cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j
 
   G_star = critical_graph(G, K, C)
   undirected_G_star = get_skeleton(G_star) # This better be a Graphs.Graph
-  paths = all_simple_paths(undirected_G_star, i, j;cutoff = 4)
+  paths = all_simple_paths(undirected_G_star, i, j; cutoff = 4)
 
   return !any(paths) do p
-    length(p) == 2 && (has_edge(G_star, i,j) || has_edge(G_star, j, i)) || 
-    length(p) == 3 && (is_type_b(G_star, p, K) || is_type_c(G_star, p, K)) ||
-    length(p) == 4 && is_type_d(G_star, p, K) ||
-    length(p) == 5 && is_type_e(G_star, p,K) ||
-    false
+    (length(p) == 2 && (has_edge(G_star, i,j) || has_edge(G_star, j, i))) || 
+    (length(p) == 3 && (is_type_b(G_star, p, K) || is_type_c(G_star, p, K))) ||
+    (length(p) == 4 && is_type_d(G_star, p, K)) ||
+    (length(p) == 5 && is_type_e(G_star, p, K))
   end
+end
+
+function cstar_separation(G::Graph{Directed}, W::Vector, K::Vector{Vertex}, i::Vertex, j::Vertex)
+  return cstar_separation(G, weights_to_matrix(G,W), K, i, j)
 end
 
 @doc raw"""
