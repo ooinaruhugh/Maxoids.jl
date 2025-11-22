@@ -3,6 +3,23 @@
     cstar_separation(G::Graph{Directed}, C)
 
 Collects all $C^\star$-separation statements of `G` given the weights `C`.
+
+# Examples
+```jldocstring
+julia> G = complete_DAG(3)
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+julia> C = weights_to_tropical_matrix(G,[0,-1,0])
+[-infty      (0)     (-1)]
+[-infty   -infty      (0)]
+[-infty   -infty   -infty]
+
+julia> cstar_separation(G,C)
+1-element Vector{Any}:
+ Any[3, 1, [2]]
+
+```
 """
 function cstar_separation(G::Graph{Directed}, C)
   L = []
@@ -16,6 +33,23 @@ function cstar_separation(G::Graph{Directed}, C)
   return L 
 end 
 
+@doc raw"""
+    cstar_separation(G::Graph{Directed}, W::Vector{<:RingElement})
+
+Collects all $C^\star$-separation statements of `G` given the weights `W`.
+
+# Examples
+```jldocstring
+julia> G = complete_DAG(3)
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+julia> cstar_separation(G,[0,-1,0])
+1-element Vector{Any}:
+ Any[3, 1, [2]]
+
+```
+"""
 cstar_separation(G::Graph{Directed}, W::Vector{<:RingElement}) = cstar_separation(G, weights_to_tropical_matrix(G,W))
 
 @doc raw"""
