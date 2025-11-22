@@ -16,18 +16,19 @@ function randow_weight_matrix(G::Graph{Directed}; range=1:10000)
     return C
 end 
 
-function weights_to_matrix(G::Graph{Directed}, W::Vector{<:TropicalSemiringElem})
-  C = zeros(tropical_semiring(max), nv(G), nv(G))
+function weights_to_tropical_matrix(G::Graph{Directed}, W::Vector{<:RingElement})
+  T = tropical_semiring(max)
+  C = zero_matrix(T, nv(G), nv(G))
 
   for (e,w) in zip(edges(G),W)
     s,t = src(e),dst(e)
-    C[s,t] = w
+    C[s,t] = T(w)
   end
 
   return C
 end
 
-function matrix_to_weights(G::Graph{Directed}, C::Matrix{<:TropicalSemiringElem})
+function matrix_to_weights(G::Graph{Directed}, C::Matrix{<:RingElement})
   W = [C[src(e),dst(e)] for e in edges(G)]
   return W
 end
