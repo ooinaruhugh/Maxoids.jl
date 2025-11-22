@@ -1,19 +1,20 @@
 
 function critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C)
     V = vertices(G)
+    _G = to_graphs_graph(G)
 
     # make the kleene star to test for max weighted paths
     Cstar = kleene_star(C)
 
     # make an empty graph which will be our critical graph that we add edges to
-    Gstar = Graph{Directed}(nv(V))
+    Gstar = Graph{Directed}(nv(G))
 
     # loop over every possible edge
     for (i,j) in Iterators.product(V, V)
         i == j && continue
 
         # collect critical paths
-        crit_paths = [p for p in all_simple_paths(G, i, j) if path_weight(C, p) == Cstar[i, j]]
+        crit_paths = [p for p in all_simple_paths(_G, i, j) if path_weight(C, p) == Cstar[i, j]]
         
         if length(crit_paths) == 0
           continue
@@ -24,7 +25,7 @@ function critical_graph(G::Graph{Directed}, K::Vector{Vertex}, C)
         if any(map(p -> any(map(k -> k in p[2:length(p)-1], K)), crit_paths))
           continue
         else
-          add_edge!(Gstar, (i, j))
+          add_edge!(Gstar, i, j)
         end
     end
 
@@ -72,7 +73,7 @@ end
 function get_skeleton(H::Graph{Directed})
     n = nv(H)
     G = gr.SimpleGraph(n,0)
-    for edge in gr.edges(H)
+    for edge in gr.edges(G)
         gr.add_edge!(G, edge)
     end
     return G 

@@ -8,7 +8,7 @@ function cstar_separation(G::Graph{Directed}, C)
     L = []
     for i in collect(vertices(G)), j in 1:i-1
         for K in collect(powerset(setdiff(vertices(G), [i,j])))
-            if csep(G,C,K,i,j)
+            if cstar_separation(G,C,K,i,j)
                 push!(L,[i,j,K])
             end 
         end 

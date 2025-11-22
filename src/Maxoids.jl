@@ -1,5 +1,6 @@
 module Maxoids
 
+using Combinatorics
 using Oscar
 import Oscar: Edge, Graph, Directed
 
