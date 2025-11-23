@@ -4,8 +4,8 @@ G = Maxoids.diamond()
 F = maxoid_fan(G)
 
 for c in maximal_cones(F)
-  r,_ = rays_modulo_lineality(c)
-  println(cstar_separation(G,sum(r)))
+  w = relative_interior_point(c)
+  println(cstar_separation(G,w)
   println("Maxoid for $(facets(c)|>first)")
 end
 

@@ -6,6 +6,10 @@ import Oscar: Edge, Graph, Directed
 
 const Vertex = Int64
 const TaggedEdge = Pair{Edge,Bool}
+const CIStatement = Tuple{Vertex,Vertex,Vector{Vertex}}
+
+export Vertex
+export CIStatement
 
 TaggedEdge(i::Vertex,j::Vertex,tag::Bool) = TaggedEdge(Edge(i,j),tag)
 
