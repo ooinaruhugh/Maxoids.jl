@@ -25,6 +25,15 @@ function to_graphs_graph(G::Graph{Directed})
   return out
 end
 
+function to_graphs_graph(G::Graph{Undirected})
+  out = gr.Graph(nv(G))
+  for e in edges(G)
+    gr.add_edge!(out, src(e), dst(e))
+  end
+
+  return out
+end
+
 include("graphs.jl")
 export critical_graph
 export transitive_closure
@@ -60,6 +69,8 @@ export maxoid_polytope
 export maxoid_fan
 
 
+function DAG_to_pdf end
+function graph_to_pdf end
 
 
 end # module Maxoids
