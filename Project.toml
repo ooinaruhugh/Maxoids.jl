@@ -17,4 +17,4 @@ TikzPictures = "37f6aa50-8035-52d0-81c2-5a1d08754b2d"
 Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
 [extensions]
-TikzExt = "TikzGraphs, TikzPictures, Serialization"
+TikzExt = ["TikzGraphs", "TikzPictures", "Serialization"]
