@@ -1,10 +1,14 @@
-using Maxoids
+using Oscar,Maxoids
 
-G = Maxoids.DAG_from_edges(4, [(1,2), (1,3), (2,4), (3,4)])
-F = Maxoids.weights_for_cones(G)
+G = Maxoids.diamond()
+F = maxoid_fan(G)
 
-# This gives a cone on which the CI structure is exactly
-#   { 14|3, 23|1, 14|23 } = { 14|3 } \cup d-sep(G).
-# As 14|3 and 14|23 hold but neither 12|3 nor 24|3, this
-# violates Weak Transitivity.
-[ C => Maxoids.csep_markov(G, C) for C in F ]
+r,_ = rays_modulo_lineality(F)
+W = map(eachrow(cones(F))[1:end-1]) do i
+  sum(r[i])
+end
+
+M = [w => cstar_separation(G,w) for w in W]
+for m in M
+  println(m)
+end
