@@ -14,7 +14,7 @@ makedocs(;
   format=Documenter.HTML(;prettyurls=true),
   sitename="Maxoids.jl",
   pages=doc,
-  plugins=[bib],
+#  plugins=[bib],
 )
 
 deploydocs(
