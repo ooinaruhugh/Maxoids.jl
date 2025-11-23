@@ -154,12 +154,12 @@ function star_separation(H::Graph{Directed}, i::Vertex, j::Vertex, K::Vector{Ver
 end
 
 @doc raw"""
-    cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j::Vertex)
+    cstar_separation(G::Graph{Directed}, C, i::Vertex, j::Vertex, K::Vector{Vertex})
 
 Tests whether `i` is $C^\star$-separated from `j` in `G` given the nodes in `K`
 and weights `C` on `G`.
 """
-function cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j::Vertex)
+function cstar_separation(G::Graph{Directed}, C, i::Vertex, j::Vertex, K::Vector{Vertex})
   issubset([i,j], K) && return false
 
   G_star = critical_graph(G, K, C)
@@ -174,17 +174,17 @@ function cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j
   end
 end
 
-function cstar_separation(G::Graph{Directed}, W::AbstractVector{<:RingElement}, K::Vector{Vertex}, i::Vertex, j::Vertex)
-  return cstar_separation(G, weights_to_tropical_matrix(G,W), K, i, j)
+function cstar_separation(G::Graph{Directed}, W::AbstractVector{<:RingElement}, i::Vertex, j::Vertex, K::Vector{Vertex})
+  return cstar_separation(G, weights_to_tropical_matrix(G,W), i, j, K)
 end
 
 @doc raw"""
-    cstar_separation(G::Graph{Directed}, K::Vector{Vertex}, i::Vertex, j::Vertex)
+    cstar_separation(G::Graph{Directed}, i::Vertex, j::Vertex, K::Vector{Vertex})
 
 Tests whether `i` is $C^\star$-separated from `j` in `G` given the nodes in `K`
 and constant weights on `G`.
 """
-cstar_separation(G::Graph{Directed}, K, i, j) = cstar_separation(G, constant_weight_matrix(G), K, i, j )
+cstar_separation(G::Graph{Directed}, K, i, j) = cstar_separation(G, constant_weight_matrix(G), i, j, K)
 
 ## Checks if paths are one of the types (b) - (e) 
 function is_type_b(G::Graph{Directed}, P::Vector, K::Vector)

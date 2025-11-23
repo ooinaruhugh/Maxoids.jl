@@ -5,6 +5,40 @@
 Computes the critical DAG $\mathcal{G}^*_{C,K}$ which contains an edge $i\to j$
 whenever $i$ and $j$ are connected by a directed path, and no critical path 
 from $i$ to $j$ in `G` intersects `K`.
+
+# Examples
+
+The following calculates the critical DAG `G` of the line graph with constant weights and empty `K`.
+This amounts to taking the transitive closure of `G`.
+```jldocstring
+julia> G = graph_from_edges(Directed,[[1,2],[2,3]])
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+julia> critical_graph(G,Vertex[],constant_weight_matrix(G))
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+```
+
+In the following example, the critical DAG does not always agree with the transitive closure, 
+depending on the choice of `K`.
+```jldocstring
+julia> G = Maxoids.diamond()
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(2, 4)(3, 4)
+
+julia> C = weights_to_tropical_matrix(G,[1,0,1,0]);
+
+julia> critical_graph(G,[2],C)
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(2, 4)(3, 4)
+
+julia> critical_graph(G,[3],C)
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(1, 4)(2, 4)(3, 4)
+
+```
 """
 function critical_graph(
   G::Graph{Directed}, 
@@ -43,6 +77,23 @@ function critical_graph(
     return Gstar
 end
 
+@doc raw"""
+    transitive_closure(G::Graph{Directed})
+
+Returns the transtive closure of `G`, which contains an edge $i\to j$ whenever
+there is a path from $i$ to $j$ in `G`.
+
+# Examples
+```jldocstring
+julia> G = graph_from_edges(Directed, [[1,2],[2,3]])
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+julia> transitive_closure(G)
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+"""
 function transitive_closure(G::Graph{Directed})
   C = constant_weight_matrix(G)
   return critical_graph(G,Vertex[],C)
@@ -55,12 +106,77 @@ Computes the critical DAG $\mathcal{G}^*_{C,K}$ which contains an edge $i\to j$
 whenever $i$ and $j$ are connected by a directed path, and no critical path 
 from $i$ to $j$ in `G` intersects `K`. $C$ denotes the weight matrix on `G` given by the weight
 vector `W`.
+
+# Examples
+
+The following calculates the critical DAG `G` of the line graph with constant weights and empty `K`.
+This amounts to taking the transitive closure of `G`.
+```jldocstring
+julia> G = graph_from_edges(Directed,[[1,2],[2,3]])
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+julia> critical_graph(G,Vertex[],constant_weight_matrix(G))
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+```
+
+In the following example, the critical DAG does not always agree with the transitive closure, 
+depending on the choice of `K`.
+```jldocstring
+julia> G = Maxoids.diamond()
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(2, 4)(3, 4)
+
+julia> w = [1,0,1,0];
+
+julia> critical_graph(G,[2],w)
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(2, 4)(3, 4)
+
+julia> critical_graph(G,[3],w)
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(1, 4)(2, 4)(3, 4)
+
+```
 """
 critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::AbstractVector{<:RingElement}) = critical_graph(G,K,weights_to_tropical_matrix(G,W))
 
 kleene_star(C) = (identity_matrix(C|>matrix)+C)^ncols(C)
 path_weight(C,p) = prod(i -> C[p[i], p[i+1]] , 1:length(p)-1)
 
+@doc raw"""
+    weighted_transitive_reduction(G::Graph{Directed}, C)
+
+Returns the weighted transitive reduction of `G` with weights `C`.
+
+# Examples
+```jldocstring
+julia> G = graph_from_edges(Directed, [[1,2],[2,3]])
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+julia> C1 = weights_to_tropical_matrix(G,[0,1,0])
+[-infty      (0)      (1)]
+[-infty   -infty      (0)]
+[-infty   -infty   -infty]
+
+julia> weighted_transitive_reduction(G,C1) |> first
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+julia> C2 = weights_to_tropical_matrix(G,[1,0,1])
+[-infty      (1)      (0)]
+[-infty   -infty      (1)]
+[-infty   -infty   -infty]
+
+julia> weighted_transitive_reduction(G,C2) |> first
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+```
+"""
 function weighted_transitive_reduction(G::Graph{Directed}, C)
   #iterate through edges of G and check whether the edge is the critical path
   #if this is not the case, remove 
@@ -77,6 +193,30 @@ function weighted_transitive_reduction(G::Graph{Directed}, C)
 
   return G_tr, C_tr
 end 
+
+@doc raw"""
+    weighted_transitive_reduction(G::Graph{Directed}, W::Vector{<:RingElement})
+
+Returns the weighted transitive reduction of `G` with weights `W`.
+
+# Examples
+```jldocstring
+julia> G = graph_from_edges(Directed, [[1,2],[2,3]])
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+julia> weighted_transitive_reduction(G,[0,1,0]) |> first
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+julia> weighted_transitive_reduction(G,[1,0,1]) |> first
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+```
+"""
+weighted_transitive_reduction(G::Graph{Directed}, W::Vector{<:RingElement}) = 
+  weighted_transitive_reduction(G, weights_to_tropical_matrix(G,W))
 
 function reachability_graph(G::Graph{Directed}, K::Vector{Vertex})
   V = vertices(G)

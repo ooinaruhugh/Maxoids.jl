@@ -16,8 +16,12 @@ Polymake = "d720cf60-89b5-51f5-aff5-213f193123e7"
 TikzGraphs = "b4f28e30-c73f-5eaf-a395-8a9db949a742"
 TikzPictures = "37f6aa50-8035-52d0-81c2-5a1d08754b2d"
 
+[extras]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+
 [compat]
 TikzPictures = "~3.3.0"
+Oscar = ">=1.5.0"
 
 [extensions]
 TikzExt = ["TikzGraphs", "TikzPictures"]

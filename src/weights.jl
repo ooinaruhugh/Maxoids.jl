@@ -1,3 +1,21 @@
+@doc raw"""
+    constant_weight_matrix(G::Graph{Directed})
+
+Returns a weight matrix representing constant weights on `G`.
+
+# Examples
+```jldocstring
+julia> G = complete_DAG(3)
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+julia> constant_weight_matrix(G)
+[-infty      (0)      (0)]
+[-infty   -infty      (0)]
+[-infty   -infty   -infty]
+
+```
+"""
 function constant_weight_matrix(G::Graph{Directed})
     n = nv(G)
     C = zero_matrix(tropical_semiring(max), n, n)
@@ -7,6 +25,11 @@ function constant_weight_matrix(G::Graph{Directed})
     return C
 end 
 
+@doc raw"""
+    random_weight_matrix(G::Graph{Directed}; range=1:10000)
+
+Samples a random weight matrix on `G` with integer entries. The range can be specified using `range`.
+"""
 function random_weight_matrix(G::Graph{Directed}; range=1:10000)
     n = nv(G)
     C = zero_matrix(tropical_semiring(max), n, n)
@@ -16,6 +39,24 @@ function random_weight_matrix(G::Graph{Directed}; range=1:10000)
     return C
 end 
 
+@doc raw"""
+    weights_to_tropical_matrix(G::Graph{Directed}, W::AbstractVector{<:RingElement})
+
+Constructs a weight matrix for `G` from the specified vector `W` of weights.
+
+# Examples
+```jldocstring
+julia> G = complete_DAG(3)
+Directed graph with 3 nodes and the following edges:
+(1, 2)(1, 3)(2, 3)
+
+julia> weights_to_tropical_matrix(G,[1,2,3])
+[-infty      (1)      (2)]
+[-infty   -infty      (3)]
+[-infty   -infty   -infty]
+
+```
+"""
 function weights_to_tropical_matrix(G::Graph{Directed}, W::AbstractVector{<:RingElement})
   T = tropical_semiring(max)
   C = zero_matrix(T, nv(G), nv(G))
