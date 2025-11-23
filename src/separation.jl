@@ -174,6 +174,12 @@ function cstar_separation(G::Graph{Directed}, C, i::Vertex, j::Vertex, K::Vector
   end
 end
 
+@doc raw"""
+    cstar_separation(G::Graph{Directed}, W::AbstractVector{<:RingElement}, i::Vertex, j::Vertex, K::Vector{Vertex})
+
+Tests whether `i` is $C^\star$-separated from `j` in `G` given the nodes in `K`
+and weights `W` on `G`.
+"""
 function cstar_separation(G::Graph{Directed}, W::AbstractVector{<:RingElement}, i::Vertex, j::Vertex, K::Vector{Vertex})
   return cstar_separation(G, weights_to_tropical_matrix(G,W), i, j, K)
 end
