@@ -43,6 +43,11 @@ function critical_graph(
     return Gstar
 end
 
+function transitive_closure(G::Graph{Directed})
+  C = constant_weight_matrix(G)
+  return critical_graph(G,Vertex[],C)
+end
+
 @doc raw"""
     critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::Vector{<:RingElement}
 
@@ -51,7 +56,7 @@ whenever $i$ and $j$ are connected by a directed path, and no critical path
 from $i$ to $j$ in `G` intersects `K`. $C$ denotes the weight matrix on `G` given by the weight
 vector `W`.
 """
-critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::Vector{<:RingElement}) = critical_graph(G,K,weights_to_tropical_matrix(G,W))
+critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::AbstractVector{<:RingElement}) = critical_graph(G,K,weights_to_tropical_matrix(G,W))
 
 kleene_star(C) = (identity_matrix(C|>matrix)+C)^ncols(C)
 path_weight(C,p) = prod(i -> C[p[i], p[i+1]] , 1:length(p)-1)
@@ -61,15 +66,16 @@ function weighted_transitive_reduction(G::Graph{Directed}, C)
   #if this is not the case, remove 
   G_tr = Graph{Directed}(nv(G))
   Cstar = kleene_star(C)
-  for (i,j) in get_edges(G)
+  C_tr = one(C)
+  for e in edges(G)
+    i,j = src(e),dst(e)
     if C[i,j] == Cstar[i,j]
       add_edge!(G_tr, i, j)
-    else 
-      Cstar[i,j] = zero(tropical_semiring(max))
+      C_tr[i,j] = C[i,j]
     end 
   end 
 
-  return G_tr, Cstar
+  return G_tr, C_tr
 end 
 
 function reachability_graph(G::Graph{Directed}, K::Vector{Vertex})
@@ -134,7 +140,8 @@ function all_top_ordered_TDAGs(n::Int)
   D = all_top_ordered_DAGs(n)
   T = []
   for G in D
-    if G == transitiveclosure(G) && is_connected(get_skeleton(G)) && nv(G) == n 
+    _G = to_graphs_graph(G)
+    if _G == gr.transitiveclosure(_G) && gr.is_connected(get_skeleton(G)) && nv(G) == n 
       push!(T, G)
     end 
   end 

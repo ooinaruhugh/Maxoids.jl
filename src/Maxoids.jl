@@ -23,6 +23,9 @@ end
 
 include("graphs.jl")
 export critical_graph
+export transitive_closure
+export kleene_star
+export weighted_transitive_reduction
 export all_DAGs
 export all_top_ordered_DAGs
 export all_top_ordered_TDAGs

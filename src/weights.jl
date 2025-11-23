@@ -1,6 +1,6 @@
 function constant_weight_matrix(G::Graph{Directed})
     n = nv(G)
-    C = zeros(tropical_semiring(max), n, n)
+    C = zero_matrix(tropical_semiring(max), n, n)
     for e in edges(G)
       C[src(e),dst(e)] = one(tropical_semiring(max))
     end
@@ -9,14 +9,14 @@ end
 
 function randow_weight_matrix(G::Graph{Directed}; range=1:10000)
     n = nv(G)
-    C = zeros(tropical_semiring(max), n, n)
+    C = zero_matrix(tropical_semiring(max), n, n)
     for e in edges(G)
       C[src(e),dst(e)] = rand(range)
     end
     return C
 end 
 
-function weights_to_tropical_matrix(G::Graph{Directed}, W::Vector{<:RingElement})
+function weights_to_tropical_matrix(G::Graph{Directed}, W::AbstractVector{<:RingElement})
   T = tropical_semiring(max)
   C = zero_matrix(T, nv(G), nv(G))
 

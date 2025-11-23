@@ -66,7 +66,7 @@ function ci_string(G::Graph{Directed}, C)
     Vij = setdiff(V, ij)
     for k in sort(0:length(V)-2)
       for K in sort(collect(powerset(Vij, k, k)))
-        if csep(G,C,K,ij[1],ij[2])
+        if cstar_separation(G,C,K,ij[1],ij[2])
           s *= "0"
         else
           s *= "1"
@@ -76,3 +76,5 @@ function ci_string(G::Graph{Directed}, C)
   end 
   return s
 end
+
+ci_string(G::Graph{Directed}, W::Vector{<:RingElement}) = ci_string(G, weights_to_tropical_matrix(G,W))

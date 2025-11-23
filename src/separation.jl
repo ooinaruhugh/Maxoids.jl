@@ -174,8 +174,8 @@ function cstar_separation(G::Graph{Directed}, C, K::Vector{Vertex}, i::Vertex, j
   end
 end
 
-function cstar_separation(G::Graph{Directed}, W::Vector, K::Vector{Vertex}, i::Vertex, j::Vertex)
-  return cstar_separation(G, weights_to_matrix(G,W), K, i, j)
+function cstar_separation(G::Graph{Directed}, W::AbstractVector{<:RingElement}, K::Vector{Vertex}, i::Vertex, j::Vertex)
+  return cstar_separation(G, weights_to_tropical_matrix(G,W), K, i, j)
 end
 
 @doc raw"""
