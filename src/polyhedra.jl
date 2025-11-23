@@ -43,3 +43,13 @@ function maxoid_fan(G::Graph{Directed})
   return polyhedral_fan(c, -r, l)
 end
 
+function interior_point_of_normal_cone(P,Q)
+  PV = vertices(P)
+  QV = vertices(Q)
+  Q_vertex_indices = [findfirst(x -> x ==v, PV) for v in QV ]
+  full_dim_cones = [normal_cone(P, i) for i in Q_vertex_indices]
+
+  C = intersect(full_dim_cones)
+  return -relative_interior_point(C)
+end
+

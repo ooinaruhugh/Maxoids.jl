@@ -44,7 +44,11 @@ include("common-graphs.jl")
 export complete_DAG
 
 include("global-markov.jl")
+export all_markov_properties
+export all_markov_properties_as_ci_string
 export ci_string
+export ci_to_face_dict
+export dag_to_maxoid_dict
 
 include("separation.jl")
 export star_separation

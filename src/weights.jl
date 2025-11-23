@@ -7,7 +7,7 @@ function constant_weight_matrix(G::Graph{Directed})
     return C
 end 
 
-function randow_weight_matrix(G::Graph{Directed}; trials=1000, range=1:10000)
+function random_weight_matrix(G::Graph{Directed}; range=1:10000)
     n = nv(G)
     C = zero_matrix(tropical_semiring(max), n, n)
     for e in edges(G)

@@ -1,31 +1,5 @@
 using Oscar, Maxoids
 
-function interior_point_of_normal_cone(P,Q)
-  PV = vertices(P)
-  QV = vertices(Q)
-  Q_vertex_indices = [findfirst(x -> x ==v, PV) for v in QV ]
-  full_dim_cones = [normal_cone(P, i) for i in Q_vertex_indices]
-
-  C = intersect(full_dim_cones)
-  return -relative_interior_point(C)
-end
-
-function face_ci_dict(G::Graph{Directed})
-  P = maxoid_polytope(G)
-  face_dict = Dict{Vector{CIStatement},Vector{Polyhedron}}()
-
-  for i in 0:dim(P)
-    for f in faces(P,i)
-      v = interior_point_of_normal_cone(P,f)
-      M = cstar_separation(G,v)
-      
-      push!(get!(face_dict, M, Polyhedron[]), f)
-    end
-  end
-
-  return face_dict
-end
-
 n = 4
 G = complete_DAG(n)
 P = maxoid_polytope(G)
@@ -33,7 +7,7 @@ F = maxoid_fan(G)
 V = vertices(P)
 
 Q = faces(P,2)[4]
-Q_maxoid = cstar_separation(G,interior_point_of_normal_cone(P,Q))
+Q_maxoid = cstar_separation(G,Maxoids.interior_point_of_normal_cone(P,Q))
 
 # Look at maxoids corresponding to EDGES: how many of them are properly non-generic?
 W1   = map(relative_interior_point, maximal_cones(F))
