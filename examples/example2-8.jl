@@ -10,9 +10,9 @@ G_tr, C_tr = weighted_transitive_reduction(G,C)
 Gstar = transitive_closure(G)
 Cstar = kleene_star(C)
 
-M     = cstar_separation(G,C)
-M_tr  = cstar_separation(G_tr,C_tr)
-Mstar = cstar_separation(Gstar,Cstar)
+M     = maxoid(G,C)
+M_tr  = maxoid(G_tr,C_tr)
+Mstar = maxoid(Gstar,Cstar)
 
 println("M*(G,C)       = $(M)")
 println("M*(G_tr,C_tr) = $(M_tr)")

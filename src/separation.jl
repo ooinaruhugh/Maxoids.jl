@@ -153,6 +153,12 @@ function star_separation(H::Graph{Directed}, i::Vertex, j::Vertex, K::Vector{Ver
   return in(j, star_separation(H, [i], K))
 end
 
+function star_separation(G::Graph{Directed}, m::CIStmt)
+  return all(zip(m.I,m.J)) do (i,j)
+    star_separation(G,i,j,m.K)
+  end
+end
+
 @doc raw"""
     cstar_separation(G::Graph{Directed}, C, i::Vertex, j::Vertex, K::Vector{Vertex})
 
@@ -172,6 +178,16 @@ function cstar_separation(G::Graph{Directed}, C, i::Vertex, j::Vertex, K::Vector
     (length(p) == 4 && is_type_d(G_star, p, K)) ||
     (length(p) == 5 && is_type_e(G_star, p, K))
   end
+end
+
+function cstar_separation(G::Graph{Directed}, C::MatElem{<:TropicalSemiringElem}, m::CIStmt)
+  return all(zip(m.I, m.J)) do (i,j)
+    cstar_separation(G, C, i, j, m.K)
+  end
+end
+
+function cstar_separation(G::Graph{Directed}, W::AbstractVector{<:RingElement}, m::CIStmt)
+  return cstar_separation(G, weights_to_tropical_matrix(G,W), m)
 end
 
 @doc raw"""

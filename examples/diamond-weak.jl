@@ -8,7 +8,7 @@ W = map(eachrow(cones(F))[1:end-1]) do i
   sum(r[i])
 end
 
-M = [w => cstar_separation(G,w) for w in W]
+M = [w => maxoid(G,w) for w in W]
 for m in M
   println(m)
 end

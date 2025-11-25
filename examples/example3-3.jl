@@ -10,6 +10,6 @@ r,_ = rays_modulo_lineality(F)
 
 for i in eachrow(cones(F))[1:end-1]
   w = sum(r[i])
-  M = cstar_separation(G,w)
+  M = maxoid(G,w)
   println(M)
 end

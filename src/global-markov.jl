@@ -1,8 +1,8 @@
 
 @doc raw"""
-    cstar_separation(G::Graph{Directed}, C)
+    maxoid(G::Graph{Directed}, C)
 
-Collects all $C^\star$-separation statements of `G` given the weights `C`.
+Computes the maxoid of `G` given the weights `C`.
 
 # Examples
 ```jldocstring
@@ -15,18 +15,18 @@ julia> C = weights_to_tropical_matrix(G,[0,-1,0])
 [-infty   -infty      (0)]
 [-infty   -infty   -infty]
 
-julia> cstar_separation(G,C)
-1-element Vector{Tuple{Int64, Int64, Vector{Int64}}}:
- (3, 1, [2])
-
+julia> maxoids(G,C)
+1-element Vector{CIStmt}:
+ [1 _||_ 3 | 2]
+ 
 ```
 """
-function cstar_separation(G::Graph{Directed}, C)
-  L = CIStatement[]
+function maxoid(G::Graph{Directed}, C)
+  L = CIStmt[]
   for i in collect(vertices(G)), j in 1:i-1
     for K in collect(powerset(setdiff(vertices(G), [i,j])))
       if cstar_separation(G,C,i,j,K)
-        push!(L,(i,j,K))
+        push!(L,ci_stmt(i,j,K))
       end 
     end 
   end 
@@ -34,9 +34,9 @@ function cstar_separation(G::Graph{Directed}, C)
 end 
 
 @doc raw"""
-    cstar_separation(G::Graph{Directed}, W::Vector{<:RingElement})
+    maxoids(G::Graph{Directed}, W::Vector{<:RingElement})
 
-Collects all $C^\star$-separation statements of `G` given the weights `W`.
+Computes the maxoid of `G` given the weights `W`.
 
 # Examples
 ```jldocstring
@@ -44,19 +44,19 @@ julia> G = complete_DAG(3)
 Directed graph with 3 nodes and the following edges:
 (1, 2)(1, 3)(2, 3)
 
-julia> cstar_separation(G,C)
-1-element Vector{Tuple{Int64, Int64, Vector{Int64}}}:
- (3, 1, [2])
+julia> maxoid(G,[0,-1,0])
+1-element Vector{CIStmt}:
+ [1 _||_ 3 | 2]
 
 ```
 """
-cstar_separation(G::Graph{Directed}, W::Vector{<:RingElement}) = cstar_separation(G, weights_to_tropical_matrix(G,W))
+maxoid(G::Graph{Directed}, W::Vector{<:RingElement}) = cstar_separation(G, weights_to_tropical_matrix(G,W))
 
 @doc raw"""
     ci_string(G::Graph{Directed}, C)
 
 Prints the [gaussoids.de](https://gaussoids.de/gaussoids)-compatible binary string representing the
-CI structure of $C^\star$-separation for `G` with weights `C`.
+maxoid for `G` with weights `C`.
 
 """
 function ci_string(G::Graph{Directed}, C)
@@ -100,7 +100,7 @@ function _all_markov_properties(G,f; generic_only = false)
 end
 
 @doc raw"""
-    all_markov_properties(G; generic_only = false)
+    all_maxoids(G; generic_only = false)
 
 Returns all maxoids that can arise from weights on `G`. If `generic_only` is `true`,
 then returns only the generic maxoids for `G`.
@@ -111,41 +111,41 @@ julia> G = graph_from_edges(Directed, [[1,2],[2,3]])
 Directed graph with 3 nodes and the following edges:
 (1, 2)(2, 3)
 
-julia> all_markov_properties(G)
-2-element Vector{Vector{Tuple{Int64, Int64, Vector{Int64}}}}:
- [(3, 1, [2])]
+julia> all_maxoids(G)
+2-element Vector{Vector{CIStmt}}}:
+ [[1 _||_ 3 | 2]]
  []
 
 ```
 """
-function all_markov_properties(G::Graph{Directed}; generic_only = false)
-  return _all_markov_properties(G, cstar_separation; generic_only = generic_only)
+function all_maxoids(G::Graph{Directed}; generic_only = false)
+  return _all_markov_properties(G, maxoid; generic_only = generic_only)
 end
 
 @doc raw"""
-    all_markov_properties(G::Vector{Graph{Directed}}; generic_only = false)
+    all_maxoids(G::Vector{Graph{Directed}}; generic_only = false)
 
 Returns all maxoids that can arise from any graph in `G`. If `generic_only` is `true`,
 then returns only the generic maxoids.
 """
-function all_markov_properties(G::AbstractVector{Graph{Directed}}; generic_only = false)
+function all_maxoids(G::AbstractVector{Graph{Directed}}; generic_only = false)
   M = Set{CIStatement}()
   for g in G
-    m = all_markov_properties(g; generic_only = generic_only)
+    m = all_maxoids(g; generic_only = generic_only)
     push!(M, m...)
   end
 
   return collect(M)
 end
 
-function all_markov_properties_as_ci_string(G; generic_only = false)
+function all_maxoids_as_ci_string(G; generic_only = false)
   return _all_markov_properties(G, ci_string; generic_only = generic_only)
 end
 
-function all_markov_properties_as_ci_string(G::Vector{Graph{Directed}}; generic_only = false)
+function all_maxoids_as_ci_string(G::Vector{Graph{Directed}}; generic_only = false)
   M = Set{String}()
   for g in G
-    m = all_markov_properties_as_ci_string(g; generic_only = generic_only)
+    m = all_maxoids_as_ci_string(g; generic_only = generic_only)
     push!(M, m...)
   end
 
@@ -153,11 +153,11 @@ function all_markov_properties_as_ci_string(G::Vector{Graph{Directed}}; generic_
 end
 
 @doc raw"""
-    ci_to_face_dict(G::Graph{Directed})
+    maxoid_to_face_dict(G::Graph{Directed})
 
 Returns a dictionary mapping maxoids on `G` to faces of the maxoid polytope of `G`.
 """
-function ci_to_face_dict(G::Graph{Directed})
+function maxoid_to_face_dict(G::Graph{Directed})
   P = maxoid_polytope(G)
   face_dict = Dict{Vector{CIStatement},Vector{Polyhedron}}()
 

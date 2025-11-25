@@ -9,23 +9,23 @@ n = 4;
 #GG = all_top_ordered_TDAGs(n)
 GG = all_DAGs(n);
 
-CI = all_markov_properties_as_ci_string(GG)
+CI = all_maxoids_as_ci_string(GG)
 println(CI)
 
 threenode_DAGs = all_top_ordered_TDAGs(3)
-all_threenode_maxoids = all_markov_properties(threenode_DAGs; generic_only = true)
+all_threenode_maxoids = all_maxoids(threenode_DAGs; generic_only = true)
 
 fournode_DAGs = all_top_ordered_TDAGs(4)
-all_fournode_maxoids = all_markov_properties(fournode_DAGs)
-all_fournode_generic_maxoids = all_markov_properties(fournode_DAGs; generic_only = true)
+all_fournode_maxoids = all_maxoids(fournode_DAGs)
+all_fournode_generic_maxoids = all_maxoids(fournode_DAGs; generic_only = true)
 
 fivenode_DAGs = all_top_ordered_TDAGs(4)
-all_fivenode_maxoids = all_markov_properties(fivenode_DAGs)
+all_fivenode_maxoids = all_maxoids(fivenode_DAGs)
 
 sixnode_DAGs = all_top_ordered_TDAGs(6)
-all_sixnode_maxoids = all_markov_properties(sixnode_DAGs)
+all_sixnode_maxoids = all_maxoids(sixnode_DAGs)
 
 sixvar = filter(x -> n_edges(x) < 11, sixnode_DAGs)
 G = sixvar[2598]
-M = all_markov_properties_as_ci_string(G; generic_only = true)
+M = all_maxoids_as_ci_string(G; generic_only = true)
 

@@ -6,10 +6,8 @@ import Oscar: Edge, Graph, Directed
 
 const Vertex = Int64
 const TaggedEdge = Pair{Edge,Bool}
-const CIStatement = Tuple{Vertex,Vertex,Vector{Vertex}}
 
 export Vertex
-export CIStatement
 
 TaggedEdge(i::Vertex,j::Vertex,tag::Bool) = TaggedEdge(Edge(i,j),tag)
 
@@ -53,10 +51,11 @@ include("common-graphs.jl")
 export complete_DAG
 
 include("global-markov.jl")
-export all_markov_properties
-export all_markov_properties_as_ci_string
+export maxoid
+export all_maxoids
+export all_maxoids_as_ci_string
 export ci_string
-export ci_to_face_dict
+export maxoid_to_face_dict
 export dag_to_maxoid_dict
 
 include("separation.jl")

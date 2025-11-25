@@ -13,8 +13,8 @@ Q_maxoid = cstar_separation(G,Maxoids.interior_point_of_normal_cone(P,Q))
 W1   = map(relative_interior_point, maximal_cones(F))
 W2,_ = rays_modulo_lineality(F)
 
-M1 = [cstar_separation(G,w) for w in W1] |> unique
-M2 = [cstar_separation(G,w) for w in W2]
+M1 = [maxoid(G,w) for w in W1] |> unique
+M2 = [maxoid(G,w) for w in W2]
 
 issubset(M2,M1)
 setdiff(M1,M2)
@@ -24,5 +24,5 @@ facet_V = [p for p in V if p[6] + p[8] - p[10] == 2]
 facet = convex_hull(facet_V)
 facet_F = normal_fan(convex_hull(facet_V))
 facet_W = map(relative_interior_point, maximal_cones(F))
-M = [cstar_separation(G,w) for w in facet_W]
+M = [maxoid(G,w) for w in facet_W]
 
