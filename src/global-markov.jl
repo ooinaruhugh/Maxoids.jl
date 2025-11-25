@@ -181,7 +181,7 @@ that can arise from them.
 
 """
 function dag_to_maxoid_dict(G::Vector{Graph{Directed}})
-  M = map(all_markov_properties, G)
+  M = map(all_maxoids, G)
   return Dict(G .=> M)
 end
 

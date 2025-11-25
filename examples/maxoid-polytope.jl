@@ -7,7 +7,7 @@ F = maxoid_fan(G)
 V = vertices(P)
 
 Q = faces(P,2)[4]
-Q_maxoid = cstar_separation(G,Maxoids.interior_point_of_normal_cone(P,Q))
+Q_maxoid = maxoids(G,Maxoids.interior_point_of_normal_cone(P,Q))
 
 # Look at maxoids corresponding to EDGES: how many of them are properly non-generic?
 W1   = map(relative_interior_point, maximal_cones(F))

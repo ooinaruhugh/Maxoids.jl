@@ -266,24 +266,35 @@ function all_DAGs(n::Int)
   return [graph_from_edges(Directed, E, n) for E in collect(D)]
 end
 
+function all_TDAGs(n::Int)
+  return Iterators.filter(all_DAGs(n)) do G
+    _G = to_graphs_graph(G)
+    _G == gr.transitiveclosure(_G) && gr.is_connected(get_skeleton(G)) && nv(G) == n
+  end
+end
+
+@doc raw"""
+    all_top_ordered_DAGs(n::Int)
+
+Returns a generator for all topologically ordered DAGs.
+
+"""
 function all_top_ordered_DAGs(n::Int)
-  D = []
   all_edges = [(i,j) for i in 1:n, j in 1:n if i<j]
-  for E in collect(powerset(all_edges))
-    G = graph_from_edges(Directed, E, n)
-    push!(D, G)
-  end 
-  return D 
+  EE = powerset(all_edges)
+  D = (graph_from_edges(Directed, E, n) for E in EE)
+  return D
 end 
 
+@doc raw"""
+    all_top_ordered_DAGs(n::Int)
+
+Returns a generator for all topologically ordered DAGs which are transitively closed.
+
+"""
 function all_top_ordered_TDAGs(n::Int)
-  D = all_top_ordered_DAGs(n)
-  T = []
-  for G in D
+  return Iterators.filter(all_top_ordered_DAGs(n)) do G
     _G = to_graphs_graph(G)
-    if _G == gr.transitiveclosure(_G) && gr.is_connected(get_skeleton(G)) && nv(G) == n 
-      push!(T, G)
-    end 
-  end 
-  return T
+    _G == gr.transitiveclosure(_G) && gr.is_connected(get_skeleton(G)) && nv(G) == n
+  end
 end 
