@@ -1,7 +1,7 @@
-```@doc
+```@docs
     maxoid_polytope(G::Graph{Directed})
 ```
 
-```@doc
+```@docs
     maxoid_fan(G::Graph{Directed})
 ```

@@ -18,6 +18,6 @@
 ```
 
 ```@docs
-    all_markov_properties(G; generic_only = false)
-    all_markov_properties(G::Vector{Graph{Directed}}; generic_only = false)
+    all_markov_properties(G::Graph{Directed}; generic_only = false)
+    all_markov_properties(G::AbstractVector{Graph{Directed}}; generic_only = false)
 ```

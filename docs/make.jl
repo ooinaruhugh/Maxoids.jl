@@ -17,6 +17,6 @@ makedocs(;
 #  plugins=[bib],
 )
 
-deploydocs(
-  repo="github.com/ooinaruhugh/Maxoids.jl.git"
-)
+#deploydocs(
+#  repo="github.com/ooinaruhugh/Maxoids.jl.git"
+#)
