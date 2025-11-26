@@ -129,7 +129,7 @@ Returns all maxoids that can arise from any graph in `G`. If `generic_only` is `
 then returns only the generic maxoids.
 """
 function all_maxoids(G::Vector{Graph{Directed}}; generic_only = false)
-  M = Set{Vector{Oscar.CIStmt}}()
+  M = Set{Vector{CIStmt}}()
   for g in G
     m = all_maxoids(g; generic_only = generic_only)
     push!(M, m...)
