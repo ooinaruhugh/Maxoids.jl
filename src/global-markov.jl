@@ -50,7 +50,7 @@ julia> maxoid(G,[0,-1,0])
 
 ```
 """
-maxoid(G::Graph{Directed}, W::Vector{<:RingElement}) = cstar_separation(G, weights_to_tropical_matrix(G,W))
+maxoid(G::Graph{Directed}, W::Vector{<:RingElement}) = maxoid(G, weights_to_tropical_matrix(G,W))
 
 @doc raw"""
     ci_string(G::Graph{Directed}, C)
@@ -128,8 +128,8 @@ end
 Returns all maxoids that can arise from any graph in `G`. If `generic_only` is `true`,
 then returns only the generic maxoids.
 """
-function all_maxoids(G::AbstractVector{Graph{Directed}}; generic_only = false)
-  M = Set{CIStatement}()
+function all_maxoids(G::Vector{Graph{Directed}}; generic_only = false)
+  M = Set{Vector{Oscar.CIStmt}}()
   for g in G
     m = all_maxoids(g; generic_only = generic_only)
     push!(M, m...)
@@ -164,7 +164,7 @@ function maxoid_to_face_dict(G::Graph{Directed})
   for i in 0:dim(P)
     for f in faces(P,i)
       v = interior_point_of_normal_cone(P,f)
-      M = cstar_separation(G,v)
+      M = maxoid(G,v)
       
       push!(get!(face_dict, M, Polyhedron[]), f)
     end
