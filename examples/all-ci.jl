@@ -7,7 +7,10 @@ n = 4;
 
 # We may restrict to topologically ordered and transitively closed DAGs.
 #GG = all_top_ordered_TDAGs(n)
-GG = all_DAGs(n);
+GG = all_top_ordered_TDAGs(n);
+length(all_maxoids(collect(GG), generic_only = false)) , length(all_maxoids(collect(GG), generic_only = true)) 
+
+
 
 CI = all_maxoids_as_ci_string(GG)
 println(CI)
