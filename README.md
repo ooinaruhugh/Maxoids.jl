@@ -1,5 +1,6 @@
 # Maxoids.jl
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ooinaruhugh.github.io/Maxoids.jl/dev)
+
 This repository contains a Julia package for working with conditional independence of max-linear Bayesian networks.
 It accompanies the paper *Polyhedral aspects of maxoids* ([arxiv](https://arxiv.org/abs/2504.21068)).
 

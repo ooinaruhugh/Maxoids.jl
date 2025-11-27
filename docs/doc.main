@@ -1,5 +1,6 @@
 [
   "Home" => "index.md",
   "Markov propeties" => "markov-properties.md",
-  "Maxoid polytope" => "maxoid-polytope.md"
+  "Maxoid polytope" => "maxoid-polytope.md",
+  "Implications and SMT" => "implications.md"
 ]
