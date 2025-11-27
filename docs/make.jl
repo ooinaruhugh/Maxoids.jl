@@ -1,4 +1,5 @@
 using Oscar, Maxoids
+using Satisfiability
 using Documenter
 
 Base.print(io::IO, b::Base.Docs.Binding) = print(io, b.var)
