@@ -1,7 +1,7 @@
 authors = ["Kamillo Ferry <kafe@kafe.dev>", "Francesco Nowell", "Benjamin Hollering", "Tobias Boege"]
 name = "Maxoids"
 uuid = "b7166d23-9f35-4d07-9399-e1add1741ff3"
-version = "0.3.0"
+version = "1.0.0"
 
 [compat]
 Oscar = ">=1.6.0"
