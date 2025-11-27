@@ -7,7 +7,7 @@ Currently, this package can be installed by executing the following in a Julia R
 ```jlcon
 julia> using Pkg
 
-julia> Pkg.add("https://github.com/ooinaruhugh/PolyhedralAspectsofMaxoids")
+julia> Pkg.add("Maxoids")
 ```
 
 Then, one can use this package as follows.

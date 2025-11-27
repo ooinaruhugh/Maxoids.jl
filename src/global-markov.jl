@@ -123,12 +123,12 @@ function all_maxoids(G::Graph{Directed}; generic_only = false)
 end
 
 @doc raw"""
-    all_maxoids(G::Vector{Graph{Directed}}; generic_only = false)
+    all_maxoids(G::AbstractVector{Graph{Directed}}; generic_only = false)
 
 Returns all maxoids that can arise from any graph in `G`. If `generic_only` is `true`,
 then returns only the generic maxoids.
 """
-function all_maxoids(G::Vector{Graph{Directed}}; generic_only = false)
+function all_maxoids(G::AbstractVector{Graph{Directed}}; generic_only = false)
   M = Set{Vector{CIStmt}}()
   for g in G
     m = all_maxoids(g; generic_only = generic_only)
@@ -138,11 +138,24 @@ function all_maxoids(G::Vector{Graph{Directed}}; generic_only = false)
   return collect(M)
 end
 
+@doc raw"""
+    all_maxoids_as_ci_string(G; generic_only = false)
+
+Returns all maxoids that can arise from weights on `G` as [gaussoids.de](https://gaussoids.de/gaussoids)-compatible binary string.
+If `generic_only` is `true`, then returns only the generic maxoids for `G`.
+"""
 function all_maxoids_as_ci_string(G; generic_only = false)
   return _all_markov_properties(G, ci_string; generic_only = generic_only)
 end
 
-function all_maxoids_as_ci_string(G::Vector{Graph{Directed}}; generic_only = false)
+@doc raw"""
+    all_maxoids_as_ci_string(G::AbstractVector{Graph{Directed}}; generic_only = false)
+
+Returns all maxoids that can arise from weights on any graph in `G` as
+[gaussoids.de](https://gaussoids.de/gaussoids)-compatible binary string.
+If `generic_only` is `true`, then returns only the generic maxoids for `G`.
+"""
+function all_maxoids_as_ci_string(G::AbstractVector{Graph{Directed}}; generic_only = false)
   M = Set{String}()
   for g in G
     m = all_maxoids_as_ci_string(g; generic_only = generic_only)
