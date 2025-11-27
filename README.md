@@ -15,10 +15,12 @@ Then, one can use this package as follows.
 ```jlcon
 julia> using Maxoids
 
-julia> G = complete_DAG(4)
+julia> G = complete_DAG(4) 
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(1, 4)(2, 3)(2, 4)(3, 4)
 
-julia> maxoid(G,[1,2,3,4,5,6])
-7-element Vector{Oscar.CIStmt}:
+julia> maxoid(G, [1,2,3,4,5,6]) 
+7-element Vector{CIStmt}:
  [1 _||_ 3 | 2]
  [1 _||_ 3 | {2, 4}]
  [1 _||_ 4 | 2]

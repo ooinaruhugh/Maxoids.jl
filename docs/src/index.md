@@ -15,17 +15,18 @@ julia> Pkg.add("https://github.com/ooinaruhugh/PolyhedralAspectsofMaxoids")
 ```jlcon
 julia> using Maxoids
 
-julia> G = complete_DAG(4)
+julia> G = complete_DAG(4) 
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(1, 4)(2, 3)(2, 4)(3, 4)
 
-julia> maxoids(G,[1,2,3,4,5,6])
-7-element Vector{Tuple{Int64, Int64, Vector{Int64}}}:
- (3, 1, [2])
- (3, 1, [2, 4])
- (4, 1, [2])
- (4, 1, [3])
- (4, 1, [2, 3])
- (4, 2, [3])
- (4, 2, [1, 3])
-
+julia> maxoid(G, [1,2,3,4,5,6]) 
+7-element Vector{CIStmt}:
+ [1 _||_ 3 | 2]
+ [1 _||_ 3 | {2, 4}]
+ [1 _||_ 4 | 2]
+ [1 _||_ 4 | 3]
+ [1 _||_ 4 | {2, 3}]
+ [2 _||_ 4 | 3]
+ [2 _||_ 4 | {1, 3}]
 ```
 
