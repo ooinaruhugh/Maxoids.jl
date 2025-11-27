@@ -70,6 +70,7 @@ export maxoid_fan
 
 include("implication.jl")
 export polyhedral_separation_set
+export polyhedral_generic_set
 export maxoid_implication
 
 
