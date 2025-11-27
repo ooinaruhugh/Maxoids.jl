@@ -16,7 +16,7 @@ julia> using Maxoids
 
 julia> G = complete_DAG(4)
 
-julia> cstar_separation(G,[1,2,3,4,5,6])
+julia> maxoid(G,[1,2,3,4,5,6])
 7-element Vector{Tuple{Int64, Int64, Vector{Int64}}}:
  (3, 1, [2])
  (3, 1, [2, 4])
