@@ -1,6 +1,7 @@
 module Maxoids
 
 using Combinatorics
+using Satisfiability
 using Oscar
 import Oscar: Edge, Graph, Directed
 
@@ -66,6 +67,10 @@ include("polyhedra.jl")
 export symbolic_adjacency_matrix
 export maxoid_polytope
 export maxoid_fan
+
+include("implication.jl")
+export polyhedral_separation_set
+export maxoid_implication
 
 
 function DAG_to_pdf end

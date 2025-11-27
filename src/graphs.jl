@@ -100,6 +100,50 @@ function transitive_closure(G::Graph{Directed})
 end
 
 @doc raw"""
+    transitively_closed(G::Graph{Directed})::Bool
+
+Checks whether `G` is transitively closed.
+
+# Examples
+```jldocstring
+julia> G = graph_from_edges(Directed, [[1,2],[2,3]])
+Directed graph with 3 nodes and the following edges:
+(1, 2)(2, 3)
+
+julia> transitively_closed(G)
+false
+
+"""
+function transitively_closed(G::Graph{Directed})::Bool
+  _G = to_graphs_graph(G)
+  return _G == gr.transitiveclosure(_G)
+end
+
+@doc raw"""
+    all_simple_paths(G::Graph{Directed}, i::Int, j::Int)
+
+Returns all simple paths in `G` from node `i` to node `j`.
+
+# Examples
+```jldocstring
+julia> G = complete_DAG(4)
+Directed graph with 4 nodes and the following edges:
+(1, 2)(1, 3)(1, 4)(2, 3)(2, 4)(3, 4)
+
+julia> collect(all_simple_paths(G, 1, 4))
+4-element Vector{Vector{Int64}}:
+ [1, 2, 3, 4]
+ [1, 2, 4]
+ [1, 3, 4]
+ [1, 4]
+
+"""
+function all_simple_paths(G::Graph{Directed}, i::Int, j::Int)
+  _G = to_graphs_graph(G)
+  return gr.all_simple_paths(_G, i, j)
+end
+
+@doc raw"""
     critical_graph(G::Graph{Directed}, K::Vector{Vertex}, W::Vector{<:RingElement}
 
 Computes the critical DAG $\mathcal{G}^*_{C,K}$ which contains an edge $i\to j$
@@ -247,29 +291,16 @@ function get_skeleton(H::Graph{Directed})
 end 
 
 function all_DAGs(n::Int)
-  D = Set{Vector{Tuple{Int,Int}}}()
-  all_edges = [(i,j) for i in 1:n, j in 1:n if i<j]
-  perms = permutations(1:n)
-
-  for E in collect(powerset(all_edges))
-    if !isempty(E) 
-      for perm in perms 
-        F = [(perm[i],perm[j]) for (i,j) in E] 
-
-        push!(D, sort(F))
-      end 
-
-    end 
-
-  end     
-  push!(D, Tuple{Int,Int}[])
-  return [graph_from_edges(Directed, E, n) for E in collect(D)]
+  all_perms = permutations(1:n)
+  all_graphs = Iterators.flatten(powerset([(i,j) for i in 1:n for j in 1:n if p[i] < p[j]]) for p in all_perms)
+  seen = Set()
+  return (graph_from_edges(Directed, E, n) for E in all_graphs if !in!(E, seen))
 end
 
 function all_TDAGs(n::Int)
   return Iterators.filter(all_DAGs(n)) do G
     _G = to_graphs_graph(G)
-    _G == gr.transitiveclosure(_G) && gr.is_connected(get_skeleton(G)) && nv(G) == n
+    _G == gr.transitiveclosure(_G) # && gr.is_connected(get_skeleton(G)) && nv(G) == n
   end
 end
 
