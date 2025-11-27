@@ -15,7 +15,7 @@ julia> C = weights_to_tropical_matrix(G,[0,-1,0])
 [-infty   -infty      (0)]
 [-infty   -infty   -infty]
 
-julia> maxoids(G,C)
+julia> maxoid(G,C)
 1-element Vector{CIStmt}:
  [1 _||_ 3 | 2]
  
@@ -34,7 +34,7 @@ function maxoid(G::Graph{Directed}, C)
 end 
 
 @doc raw"""
-    maxoids(G::Graph{Directed}, W::Vector{<:RingElement})
+    maxoid(G::Graph{Directed}, W::Vector{<:RingElement})
 
 Computes the maxoid of `G` given the weights `W`.
 
