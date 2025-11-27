@@ -2,6 +2,7 @@
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Maxoids = "b7166d23-9f35-4d07-9399-e1add1741ff3"
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
+Satisfiability = "160ab843-0bc6-4ba4-9585-b7478b70f443"
 
 [sources]
 Maxoids = {path = ".."}
