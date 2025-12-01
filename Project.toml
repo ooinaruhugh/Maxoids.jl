@@ -4,8 +4,13 @@ uuid = "b7166d23-9f35-4d07-9399-e1add1741ff3"
 version = "1.0.0"
 
 [compat]
-Oscar = ">=1.6.0"
-TikzPictures = "~3.3.0"
+Combinatorics = "^1"
+Distributions = "~0.25"
+Graphs = "~1.13"
+Oscar = ">=1.6"
+Polymake = "^0.13"
+Satisfiability = "^0.2"
+TikzPictures = "~3.3"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
