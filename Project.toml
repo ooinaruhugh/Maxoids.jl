@@ -4,6 +4,7 @@ uuid = "b7166d23-9f35-4d07-9399-e1add1741ff3"
 version = "1.0.0"
 
 [compat]
+julia = ">=1.10"
 Combinatorics = "^1"
 Distributions = "~0.25"
 Graphs = "~1.13"
